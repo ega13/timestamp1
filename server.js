@@ -1,39 +1,25 @@
-// server.js
-// where your node app starts
+// Get dependencies
+const express = require('express');
+const http = require('http');
+const app = express();
 
-// init project
-var express = require('express');
-var app = express();
+// Get our API routes
+const api = require('./api');
 
-// we've started you off with Express, 
-// but feel free to use whatever libs or frameworks you'd like through `package.json`.
-
-// http://expressjs.com/en/starter/static-files.html
+// Make sure our app can find our css and javascript frontend files
+// which are located in the public folder
 app.use(express.static('public'));
 
-// http://expressjs.com/en/starter/basic-routing.html
-app.get("/", function (request, response) {
-  response.sendFile(__dirname + '/views/index.html');
-});
+// Route to the routes :D
+app.use('/api/v1', api);
+app.use('/api/', api);
+app.use('/', api);
 
-app.get("/dreams", function (request, response) {
-  response.send(dreams);
-});
+// Enable pug (jade) for view rendering
+app.set('view engine', 'pug');
 
-// could also use the POST body instead of query string: http://expressjs.com/en/api.html#req.body
-app.post("/dreams", function (request, response) {
-  dreams.push(request.query.dream);
-  response.sendStatus(200);
-});
-
-// Simple in-memory store for now
-var dreams = [
-  "Find and count some sheep",
-  "Climb a really tall mountain",
-  "Wash the dishes"
-];
-
-// listen for requests :)
-var listener = app.listen(process.env.PORT, function () {
-  console.log('Your app is listening on port ' + listener.address().port);
-});
+// Create the server and fire it up
+const server = http.createServer(app);
+const port = process.env.PORT || '3000';
+app.set('port', port);
+server.listen(port, () => console.log(`API running on localhost:${port}`));
